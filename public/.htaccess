@@ -1,0 +1,19 @@
+# Tệp này đặt tại: C:\laragon\www\PHP2\.htaccess
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # 1. Đảm bảo BASE_PATH là thư mục dự án của bạn (Tùy chọn nhưng nên có)
+    # RewriteBase /PHP2/
+
+    # 2. Nếu đường dẫn đã chứa /public/ rồi thì không xử lý thêm nữa
+    # Điều này ngăn chặn lỗi lặp: public/public/...
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^ - [L]
+
+    # 3. Chuyển hướng mọi yêu cầu chưa có /public/ vào thư mục public/
+    # Loại trừ các yêu cầu là tệp tin hoặc thư mục thật tồn tại ngay tại gốc (nếu có)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
