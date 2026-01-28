@@ -3,55 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'TechMart - Công nghệ hàng đầu' }}</title>
+    <title>{{ $title ?? 'TechMart - Gia Dụng Thông Minh' }}</title>
     
-    <!-- CSS: Bootstrap 5, Icons & Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
-        .navbar-user { background-color: #0f172a !important; border-bottom: 3px solid #2563eb; padding: 12px 0; }
-        .navbar-brand { color: #fff !important; font-weight: 800; letter-spacing: -1.5px; }
-        .nav-link { color: #cbd5e1 !important; font-weight: 600; font-size: 0.9rem; transition: 0.2s; padding: 8px 16px !important; }
-        .nav-link:hover { color: #3b82f6 !important; }
+        :root {
+            --primary-color: #009981; /* Màu xanh chủ đạo cho gia dụng */
+            --primary-hover: #007a67;
+            --secondary-color: #fd7e14; /* Màu cam cho nút mua hàng */
+            --bg-body: #f3f4f6;
+            --text-dark: #1f2937;
+        }
+
+        body { 
+            font-family: 'Nunito Sans', sans-serif; 
+            background-color: var(--bg-body); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            color: var(--text-dark);
+        }
+
+        /* Navbar Design */
+        .navbar-user { 
+            background-color: #ffffff !important; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 15px 0;
+        }
         
-        /* User Profile Button */
+        .navbar-brand { 
+            color: var(--primary-color) !important; 
+            font-weight: 800; 
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link { 
+            color: #4b5563 !important; 
+            font-weight: 700; 
+            font-size: 0.95rem; 
+            transition: 0.2s; 
+            padding: 8px 18px !important; 
+            text-transform: uppercase;
+        }
+        
+        .nav-link:hover, .nav-link.active { 
+            color: var(--primary-color) !important; 
+        }
+
+        /* User Profile & Buttons */
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: white;
+        }
+
         .user-profile-btn { 
-            background: rgba(255, 255, 255, 0.08); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff; 
-            padding: 6px 18px; 
+            background: #f1f5f9;
+            color: var(--primary-color); 
+            padding: 8px 20px; 
             border-radius: 50px; 
-            font-weight: 600;
+            font-weight: 700;
+            border: 1px solid transparent;
             transition: 0.3s;
         }
-        .user-profile-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: #3b82f6; }
+        .user-profile-btn:hover { 
+            background: #e2e8f0; 
+            color: var(--primary-hover);
+        }
         
         /* Dropdown Menu */
         .dropdown-menu { 
             border: none; 
             border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
             margin-top: 15px !important;
-            padding: 8px;
-            min-width: 220px;
+            padding: 10px;
+            min-width: 240px;
         }
-        .dropdown-item { border-radius: 8px; padding: 10px 15px; font-weight: 500; font-size: 0.85rem; }
-        .dropdown-item:hover { background-color: #f1f5f9; color: #2563eb; }
+        .dropdown-item { 
+            border-radius: 8px; 
+            padding: 10px 15px; 
+            font-weight: 600; 
+            color: #4b5563;
+        }
+        .dropdown-item:hover { 
+            background-color: #f0fdf4; 
+            color: var(--primary-color); 
+        }
         
         /* Badge Giỏ hàng */
-        .cart-badge { font-size: 0.65rem; padding: 0.35em 0.6em; top: 5px !important; }
+        .cart-icon-wrapper {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .cart-icon-wrapper:hover {
+            background: var(--primary-color);
+            color: white !important;
+        }
+        .cart-icon-wrapper:hover i { color: white !important; }
+        .cart-badge { 
+            font-size: 0.7rem; 
+            padding: 0.35em 0.6em; 
+            top: -5px !important; 
+            right: -5px !important;
+            border: 2px solid #fff;
+        }
+
+        /* Tiện ích chung */
+        .text-primary-custom { color: var(--primary-color) !important; }
+        .bg-primary-custom { background-color: var(--primary-color) !important; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-user sticky-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-user sticky-top">
     <div class="container">
-        <!-- Logo -->
-        <a class="navbar-brand fs-3" href="{{ BASE_URL }}/">
-            <i class="bi bi-cpu-fill me-2 text-primary"></i>TECHMART
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ BASE_URL }}/">
+            <div class="d-flex align-items-center justify-content-center bg-primary-custom text-white rounded-3" style="width: 40px; height: 40px;">
+                <i class="bi bi-house-heart-fill fs-5"></i>
+            </div>
+            <span>TECHMART</span>
         </a>
         
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
@@ -59,31 +146,28 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navMain">
-            <!-- Menu bên trái -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ BASE_URL }}/product/index">SẢN PHẨM</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ BASE_URL }}/coupon/index">VOUCHER</a>
+                    <a class="nav-link" href="{{ BASE_URL }}/coupon/index">KHUYẾN MÃI</a>
                 </li>
                 
                 {{-- Hiển thị nút ADMIN nếu người dùng là admin --}}
                 @if(isset($_SESSION['user']) && ($_SESSION['user']['role'] ?? '') === 'admin')
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="{{ BASE_URL }}/adminproduct/index">
+                        <a class="nav-link text-danger" href="{{ BASE_URL }}/adminproduct/index">
                             <i class="bi bi-shield-lock-fill me-1"></i>QUẢN TRỊ
                         </a>
                     </li>
                 @endif
             </ul>
 
-            <!-- Menu bên phải -->
-            <ul class="navbar-nav ms-auto align-items-center">
-                <!-- Giỏ hàng -->
-                <li class="nav-item me-3">
-                    <a class="nav-link position-relative d-inline-block px-3" href="{{ BASE_URL }}/cart/index">
-                        <i class="bi bi-cart3 fs-5"></i>
+            <ul class="navbar-nav ms-auto align-items-center gap-3">
+                <li class="nav-item">
+                    <a class="cart-icon-wrapper text-dark" href="{{ BASE_URL }}/cart/index">
+                        <i class="bi bi-handbag fs-5 text-secondary"></i>
                         @if(!empty($_SESSION['cart']))
                             <span class="position-absolute translate-middle badge rounded-pill bg-danger cart-badge">
                                 {{ count($_SESSION['cart']) }}
@@ -94,21 +178,20 @@
 
                 {{-- KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP --}}
                 @if(isset($_SESSION['user']) && !empty($_SESSION['user']))
-                    <!-- TRẠNG THÁI: ĐÃ ĐĂNG NHẬP (Hiện Dropdown Profile) -->
                     <li class="nav-item dropdown">
                         <button class="user-profile-btn dropdown-toggle d-flex align-items-center gap-2" 
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-5 text-primary"></i>
-                            <span>{{ $_SESSION['user']['fullname'] }}</span>
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span class="d-none d-lg-inline">{{ $_SESSION['user']['fullname'] }}</span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
-                            <li class="px-3 py-2 border-bottom mb-2">
-                                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Đang đăng nhập</div>
+                        <ul class="dropdown-menu dropdown-menu-end border-0">
+                            <li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top">
+                                <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Tài khoản</div>
                                 <div class="text-dark fw-bold small truncate">{{ $_SESSION['user']['email'] }}</div>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ BASE_URL }}/order/history">
-                                    <i class="bi bi-bag-check me-2"></i>Đơn hàng của tôi
+                                    <i class="bi bi-box-seam me-2"></i>Đơn hàng của tôi
                                 </a>
                             </li>
                             <li>
@@ -125,13 +208,12 @@
                         </ul>
                     </li>
                 @else
-                    <!-- TRẠNG THÁI: CHƯA ĐĂNG NHẬP (Hiện nút Login/Register) -->
                     <li class="nav-item">
-                        <a class="nav-link fw-bold text-white" href="{{ BASE_URL }}/auth/login">ĐĂNG NHẬP</a>
+                        <a class="nav-link text-secondary" href="{{ BASE_URL }}/auth/login">Đăng nhập</a>
                     </li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" href="{{ BASE_URL }}/auth/register">
-                            ĐĂNG KÝ
+                    <li class="nav-item">
+                        <a class="btn btn-primary-custom rounded-pill px-4 fw-bold shadow-sm" href="{{ BASE_URL }}/auth/register">
+                            Đăng ký
                         </a>
                     </li>
                 @endif

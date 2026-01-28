@@ -1,132 +1,223 @@
 @php
-    // Đảm bảo session luôn sẵn sàng để nhận diện người dùng và thông báo
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+    if (session_status() === PHP_SESSION_NONE) { session_start(); }
+    $searchKeyword = $_GET['search'] ?? '';
 @endphp
 
 @include('user.layouts.header')
 
-<!-- Vùng hiển thị thông báo -->
-@if(isset($_SESSION['success']))
-    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 py-3 px-4 mb-5 animate-bounce-in">
-        <div class="d-flex align-items-center text-success fw-bold">
-            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
-            <span>{{ $_SESSION['success'] }}</span>
+<!-- 1. HERO BANNER -->
+<section class="position-relative overflow-hidden mb-5">
+    <div class="position-relative" style="height: 450px; background-color: #f1f5f9;">
+        <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=2070&auto=format&fit=crop" 
+             alt="Header Banner" 
+             class="w-100 h-100 object-fit-cover">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.3) 60%, transparent 100%);"></div>
+        <div class="position-absolute top-50 start-0 translate-middle-y container text-white" style="z-index: 2;">
+            <div class="col-lg-6 ps-lg-4 animate-up">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold text-uppercase tracking-wider">Mùa hè 2026</span>
+                <h1 class="display-3 fw-bolder mb-3">Sống Tiện Nghi<br>Thỏa Đam Mê</h1>
+                <p class="fs-5 mb-4 text-white-50">Công nghệ gia dụng thông minh cho ngôi nhà hiện đại.</p>
+                <a href="#productList" class="btn btn-accent btn-lg rounded-pill px-5 shadow-lg fw-bold">Mua Sắm Ngay</a>
+            </div>
         </div>
-        <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert"></button>
     </div>
-    @php unset($_SESSION['success']) @endphp
-@endif
+</section>
 
-<!-- Tiêu đề và Tìm kiếm -->
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-4">
-    <div>
-        <h1 class="text-4xl font-black text-slate-900 tracking-tighter uppercase mb-1">
-            Thiết bị công nghệ
-        </h1>
-        <p class="text-slate-500 mb-0">Khám phá bộ sưu tập mới nhất (8 sản phẩm/trang)</p>
-    </div>
-    
-    <form action="{{ rtrim(BASE_URL, '/') }}/product/index" method="GET" class="d-flex gap-2">
-        <div class="input-group bg-white rounded-pill shadow-sm px-3 border border-slate-200">
-            <span class="input-group-text bg-transparent border-0 text-slate-400">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" name="search" value="{{ $_GET['search'] ?? '' }}" 
-                   class="form-control border-0 shadow-none py-2" placeholder="Tìm tên sản phẩm...">
-            <button type="submit" class="btn btn-primary rounded-pill px-4 my-1 fw-bold shadow-none text-white">TÌM</button>
-        </div>
-    </form>
-</div>
+<div class="container" id="productList">
+    <!-- 2. SEARCH & TOOLBAR -->
+    <div class="bg-white p-4 rounded-4 shadow-sm border mb-5 mt-n5 position-relative z-3">
+        <div class="row align-items-center g-3">
+            <div class="col-md-4">
+                <h3 class="fw-bold text-dark m-0">Sản phẩm <span class="text-primary">nổi bật</span></h3>
+            </div>
+            
+            <div class="col-md-8">
+                <!-- FORM TÌM KIẾM TỨC THÌ -->
+                <form action="{{ rtrim(BASE_URL, '/') }}/product/index" method="GET" id="searchForm" class="d-flex gap-2 justify-content-md-end">
+                    <div class="position-relative w-100" style="max-width: 450px;">
+                        <span class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        
+                        <!-- Input có sự kiện oninput để xử lý JS -->
+                        <input type="text" 
+                               name="search" 
+                               id="instantSearch"
+                               value="{{ $searchKeyword }}" 
+                               class="form-control rounded-pill ps-5 py-2 border-secondary-subtle bg-light focus-ring" 
+                               placeholder="Gõ để tìm kiếm thiết bị..."
+                               autocomplete="off">
 
-<!-- Lưới sản phẩm -->
-<div class="row g-4">
-    @if(isset($products) && !empty($products))
-        @foreach($products as $item)
-            <div class="col-sm-6 col-lg-4 col-xl-3">
-                <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden hover:shadow-xl transition-all border border-slate-50 group bg-white">
-                    
-                    <a href="{{ rtrim(BASE_URL, '/') }}/product/show/{{ $item['id'] }}" class="text-decoration-none">
-                        <!-- Khung chứa ảnh: Đã chỉnh lại chiều cao và padding để ảnh nhỏ lại -->
-                        <div class="bg-slate-50 p-5 d-flex align-items-center justify-content-center relative overflow-hidden" style="height: 220px;">
-                            <img src="{{ rtrim(BASE_URL, '/') }}/public/uploads/products/{{ $item['image'] ?? 'default.jpg' }}" 
-                                 class="mw-100 mh-100 object-contain transition-transform duration-500 group-hover:scale-110" 
-                                 style="max-height: 150px;" 
-                                 alt="{{ $item['name'] }}"
-                                 onerror="this.src='https://placehold.co/400x400?text=No+Image'">
-                            
-                            <div class="absolute top-3 left-3">
-                                 <span class="badge bg-primary rounded-pill px-2 py-1 small fw-bold" style="font-size: 10px;">CHÍNH HÃNG</span>
-                            </div>
-                        </div>
-
-                        <div class="card-body p-4 d-flex flex-column text-dark">
-                            <div class="mb-auto">
-                                <span class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">
-                                    {{ $item['category_name'] ?? 'Thiết bị' }}
-                                </span>
-                                <h5 class="card-title fw-bold text-dark mt-1 mb-2 line-clamp-2" style="min-height: 2.8rem; font-size: 1rem;">
-                                    {{ $item['name'] }}
-                                </h5>
-                            </div>
-                            
-                            <div class="mt-1">
-                                <p class="text-rose-600 font-black fs-5 mb-0">
-                                    {{ number_format($item['price'], 0, ',', '.') }}đ
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-
-                    <div class="card-body pt-0 px-4 pb-4">
-                        <div class="d-grid">
-                            <a href="{{ rtrim(BASE_URL, '/') }}/cart/add/{{ $item['id'] }}" 
-                               class="btn btn-primary rounded-pill fw-bold text-[11px] py-2 shadow-sm text-white transition-all hover:bg-blue-700">
-                                <i class="bi bi-cart-plus me-1"></i> THÊM VÀO GIỎ
+                        <!-- Nút Reset: Chỉ hiện khi có từ khóa -->
+                        @if(!empty($searchKeyword))
+                            <a href="{{ rtrim(BASE_URL, '/') }}/product/index" 
+                               class="position-absolute top-50 end-0 translate-middle-y me-2 btn btn-sm btn-secondary rounded-circle"
+                               style="width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                               title="Xóa lọc">
+                                <i class="bi bi-x"></i>
                             </a>
+                        @endif
+                        
+                        <!-- Loading Indicator (Ẩn mặc định) -->
+                        <div id="searchLoading" class="position-absolute top-50 end-0 translate-middle-y me-3 spinner-border spinner-border-sm text-primary d-none" role="status"></div>
+                    </div>
+                    
+                    @if(!empty($searchKeyword))
+                        <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="btn btn-outline-danger rounded-pill px-3 fw-bold d-none d-md-block text-nowrap">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Làm mới
+                        </a>
+                    @endif
+                </form>
+            </div>
+        </div>
+        
+        <!-- Hiển thị từ khóa đang tìm -->
+        @if(!empty($searchKeyword))
+            <div class="mt-3 pt-3 border-top">
+                <p class="mb-0 text-muted">
+                    Kết quả tìm kiếm cho: <strong class="text-dark">"{{ $searchKeyword }}"</strong>
+                    <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="text-decoration-none ms-2 small text-danger">(Xóa)</a>
+                </p>
+            </div>
+        @endif
+    </div>
+
+    <!-- 3. PRODUCT GRID -->
+    <div class="row g-4 mb-5">
+        @if(isset($products) && !empty($products))
+            @foreach($products as $item)
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 border-0 shadow-hover rounded-4 product-card overflow-hidden">
+                        <!-- Ảnh & Actions -->
+                        <div class="position-relative overflow-hidden p-4 text-center bg-white rounded-top-4" style="height: 260px;">
+                            <a href="{{ rtrim(BASE_URL, '/') }}/product/show/{{ $item['id'] }}">
+                                <img src="{{ rtrim(BASE_URL, '/') }}/public/uploads/products/{{ $item['image'] ?? 'default.jpg' }}" 
+                                     class="img-fluid h-100 w-100 object-fit-contain transition-transform" 
+                                     alt="{{ $item['name'] }}"
+                                     onerror="this.src='https://placehold.co/400x400?text=TechMart'">
+                            </a>
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-3 rounded-2 shadow-sm">-20%</span>
+                            
+                            <!-- HOVER ACTIONS: CHỈ HIỆN KHI RÊ CHUỘT -->
+                            <div class="product-action position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex gap-2 opacity-0">
+                                <a href="{{ rtrim(BASE_URL, '/') }}/cart/add/{{ $item['id'] }}" 
+                                   class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center"
+                                   style="width: 45px; height: 45px;" 
+                                   title="Thêm vào giỏ" data-bs-toggle="tooltip">
+                                    <i class="bi bi-bag-plus-fill fs-5 text-white"></i>
+                                </a>
+                                <a href="{{ rtrim(BASE_URL, '/') }}/product/show/{{ $item['id'] }}" 
+                                   class="btn btn-light rounded-circle shadow d-flex align-items-center justify-content-center"
+                                   style="width: 45px; height: 45px;" 
+                                   title="Xem chi tiết" data-bs-toggle="tooltip">
+                                    <i class="bi bi-eye-fill fs-5 text-dark"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin -->
+                        <div class="card-body bg-light-subtle rounded-bottom-4 border-top border-light">
+                            <div class="text-primary text-uppercase fw-bold" style="font-size: 0.7rem;">{{ $item['category_name'] ?? 'Gia dụng' }}</div>
+                            <h6 class="card-title fw-bold text-dark text-truncate mt-1 mb-2">
+                                <a href="{{ rtrim(BASE_URL, '/') }}/product/show/{{ $item['id'] }}" class="text-decoration-none text-dark">
+                                    {{ $item['name'] }}
+                                </a>
+                            </h6>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="fw-bolder fs-5 text-dark">{{ number_format($item['price'], 0, ',', '.') }}đ</span>
+                                <span class="text-muted small text-decoration-line-through">{{ number_format($item['price']*1.2, 0, ',', '.') }}đ</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+            @endforeach
+        @else
+            <div class="col-12 py-5 text-center">
+                <div class="bg-light rounded-4 p-5 border border-dashed">
+                    <i class="bi bi-search fs-1 text-muted opacity-50 mb-3 d-block"></i>
+                    <h5 class="text-muted fw-bold">Không tìm thấy sản phẩm nào!</h5>
+                    <p class="text-secondary mb-4">Hãy thử tìm với từ khóa khác hoặc xóa bộ lọc.</p>
+                    <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="btn btn-primary rounded-pill px-4">Xem tất cả sản phẩm</a>
+                </div>
             </div>
-        @endforeach
-    @else
-        <div class="col-12 text-center py-5">
-            <div class="bg-white p-5 rounded-5 shadow-sm border border-dashed border-slate-200 text-dark">
-                <i class="bi bi-inbox fs-1 text-slate-200 d-block mb-3" style="font-size: 4rem !important;"></i>
-                <h5 class="fw-bold">Không tìm thấy sản phẩm nào!</h5>
-                <a href="{{ rtrim(BASE_URL, '/') }}/product/index" class="btn btn-primary rounded-pill mt-3 text-white">XEM TẤT CẢ</a>
-            </div>
-        </div>
-    @endif
-</div>
+        @endif
+    </div>
 
-<!-- Phân trang -->
-@if(isset($totalPages) && $totalPages > 1)
-    <div class="mt-5 d-flex justify-content-center">
-        <nav>
+    <!-- Phân trang -->
+    @if(isset($totalPages) && $totalPages > 1)
+        <nav class="mb-5 d-flex justify-content-center">
             <ul class="pagination gap-2">
                 @for($i = 1; $i <= $totalPages; $i++)
-                    <li class="page-item {{ ($currentPage == $i) ? 'active' : '' }}">
-                        <a class="page-link rounded-3 border-0 shadow-sm px-3 fw-bold {{ ($currentPage == $i) ? 'bg-primary text-white' : 'bg-white text-dark' }}" 
-                           href="{{ rtrim(BASE_URL, '/') }}/product/index?page={{ $i }}&search={{ $_GET['search'] ?? '' }}">
+                    <li class="page-item">
+                        <a class="page-link rounded-3 border-0 fw-bold px-3 py-2 {{ ($currentPage == $i) ? 'bg-primary text-white shadow' : 'bg-white text-dark shadow-sm' }}" 
+                           href="{{ rtrim(BASE_URL, '/') }}/product/index?page={{ $i }}&search={{ $searchKeyword }}">
                             {{ $i }}
                         </a>
                     </li>
                 @endfor
             </ul>
         </nav>
-    </div>
-@endif
+    @endif
+</div>
 
 <style>
-    @keyframes bounceIn {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-bounce-in { animation: bounceIn 0.5s ease-out; }
-    .card a.text-decoration-none:hover h5 { color: #2563eb !important; transition: color 0.3s ease; }
-    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .shadow-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .shadow-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important; }
+    
+    /* Hiệu ứng Zoom ảnh khi hover */
+    .product-card:hover img { transform: scale(1.08); }
+    
+    /* Hiệu ứng hiện nút Action khi hover */
+    .product-action { transition: all 0.3s ease; transform: translateX(-50%) translateY(10px); }
+    .product-card:hover .product-action { opacity: 1 !important; transform: translateX(-50%) translateY(0); }
+    
+    .animate-up { animation: fadeInUp 0.8s ease-out; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+
+<!-- SCRIPT TÌM KIẾM TỨC THÌ (DEBOUNCE) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('instantSearch');
+        const searchForm = document.getElementById('searchForm');
+        const loadingIcon = document.getElementById('searchLoading');
+        let timeout = null;
+
+        if (searchInput) {
+            // Tự động focus vào ô tìm kiếm nếu đang có từ khóa
+            const val = searchInput.value;
+            if(val) {
+                searchInput.focus();
+                searchInput.setSelectionRange(val.length, val.length);
+            }
+
+            searchInput.addEventListener('input', function() {
+                // Xóa timeout cũ
+                clearTimeout(timeout);
+                
+                // Hiển thị loading (nếu muốn cầu kỳ hơn)
+                if(loadingIcon) loadingIcon.classList.remove('d-none');
+
+                // Đặt timeout mới (600ms sau khi ngừng gõ sẽ submit)
+                timeout = setTimeout(function() {
+                    searchForm.submit();
+                }, 600);
+            });
+            
+            // Xử lý nút X trong input
+            searchInput.addEventListener('search', function(event) {
+                if (searchInput.value === "") {
+                    window.location.href = "{{ rtrim(BASE_URL, '/') }}/product/index";
+                }
+            });
+        }
+        
+        // Kích hoạt tooltip
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
 
 @include('user.layouts.footer')

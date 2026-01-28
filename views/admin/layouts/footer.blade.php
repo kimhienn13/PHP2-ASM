@@ -1,15 +1,21 @@
-</div> <!-- Kết thúc container từ Header -->
+</div> <!-- End Container Fluid -->
+    </div> <!-- End Page Content Wrapper -->
+</div> <!-- End Wrapper -->
 
-<footer class="bg-white border-top py-4 mt-auto">
-    <div class="container text-center">
-        <p class="text-muted mb-0 small">
-            <strong>TechMart Admin System</strong> &copy; 2026. Tất cả quyền được bảo lưu.
-        </p>
+<!-- Footer Admin -->
+<footer class="mt-auto py-3 bg-white border-top text-center" style="font-size: 0.8rem;">
+    <div class="text-muted">
+        <strong>TechMart Admin System v2.0</strong> &copy; 2026. Made with <i class="bi bi-heart-fill text-danger" style="font-size: 10px;"></i>
     </div>
 </footer>
 
-<!-- JS: Bootstrap 5 Bundle -->
+<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script xử lý Sidebar Mobile nếu cần -->
+<script>
+    // Đã tích hợp trong index.blade.php để đảm bảo load đúng
+</script>
 
 </body>
 </html>
