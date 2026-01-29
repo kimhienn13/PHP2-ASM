@@ -22,6 +22,15 @@ class Product extends Model {
          * Thực hiện LEFT JOIN với bảng 'category' (danh mục) và 'brands' (thương hiệu)
          * để lấy tên hiển thị thay vì chỉ lấy ID.
          */
+        // Subquery tính tổng tồn kho từ bảng variants
+        $stockQuery = "(SELECT SUM(stock) FROM product_variants WHERE product_id = main_t.id)";
+
+        // Subquery lấy danh sách các màu (dạng text) để hiển thị sơ lược
+        $colorsQuery = "(SELECT GROUP_CONCAT(DISTINCT a.name SEPARATOR ', ') 
+                        FROM product_variants pv 
+                        JOIN attributes a ON pv.color_id = a.id 
+                        WHERE pv.product_id = main_t.id)";
+
         return $this->paginate(
             $this->table,
             $page,
@@ -29,7 +38,9 @@ class Product extends Model {
             $search,
             $filters,
             'name', // Cột tìm kiếm mặc định theo tên sản phẩm
-            "main_t.*, c.name as category_name, b.name as brand_name",
+            "main_t.*, c.name as category_name, b.name as brand_name, 
+             IFNULL($stockQuery, 0) as total_stock,
+             $colorsQuery as color_list",
             "LEFT JOIN category c ON main_t.category_id = c.id 
              LEFT JOIN brands b ON main_t.brand_id = b.id"
         );
@@ -51,19 +62,23 @@ class Product extends Model {
 
     /**
      * Thêm sản phẩm mới vào Database
+     * CẬP NHẬT: Trả về ID của sản phẩm vừa tạo để dùng cho việc thêm biến thể
      * @param array $data Mảng dữ liệu sản phẩm
      */
     public function create($data) {
         $sql = "INSERT INTO {$this->table} (name, price, image, category_id, brand_id, created_at) 
                 VALUES (:name, :price, :image, :category_id, :brand_id, NOW())";
         
-        return $this->query($sql, [
+        $this->query($sql, [
             'name'        => $data['name'],
             'price'       => $data['price'],
             'image'       => $data['image'] ?? null,
             'category_id' => $data['category_id'] ?? null,
             'brand_id'    => $data['brand_id'] ?? null
         ]);
+
+        // Trả về ID vừa insert (Quan trọng)
+        return $this->db->lastInsertId();
     }
 
     /**

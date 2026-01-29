@@ -124,6 +124,12 @@
             <a href="{{ BASE_URL }}/adminproduct/index" class="list-group-item list-group-item-action {{ (strpos($_SERVER['REQUEST_URI'], 'adminproduct') !== false) ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Sản phẩm
             </a>
+            
+            <!-- Đã sửa: Chuẩn hóa style và đường dẫn cho mục Thuộc tính -->
+            <a href="{{ BASE_URL }}/adminattribute" class="list-group-item list-group-item-action {{ (strpos($_SERVER['REQUEST_URI'], 'adminattribute') !== false) ? 'active' : '' }}">
+                <i class="bi bi-palette"></i> Thuộc tính (Màu/Size)
+            </a>
+
             <a href="{{ BASE_URL }}/admincategory/index" class="list-group-item list-group-item-action {{ (strpos($_SERVER['REQUEST_URI'], 'admincategory') !== false) ? 'active' : '' }}">
                 <i class="bi bi-grid"></i> Danh mục
             </a>
