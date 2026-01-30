@@ -31,55 +31,47 @@
                                     </div>
                                 </div>
 
-                                <!-- KHU VỰC DANH MỤC & THƯƠNG HIỆU CÓ CHỨC NĂNG THÊM NHANH -->
+                                <!-- KHU VỰC DANH MỤC & THƯƠNG HIỆU -->
                                 <div class="row g-2 mb-3">
-                                    
-                                    <!-- Danh mục -->
                                     <div class="col-12">
                                         <label class="form-label fw-bold text-secondary small">Danh Mục</label>
                                         <div class="input-group">
-                                            <!-- Select Box (Mặc định hiện) -->
                                             <select name="category_id" id="cat_select" class="form-select bg-light border-0">
                                                 <option value="">-- Chọn danh mục --</option>
-                                                @foreach ($categories as $c) <option value="{{ $c['id'] }}">{{ $c['name'] }}</option> @endforeach
+                                                @foreach ($all_categories as $c) <option value="{{ $c['id'] }}">{{ $c['name'] }}</option> @endforeach
                                             </select>
-                                            
-                                            <!-- Input Text (Mặc định ẩn) -->
                                             <input type="text" name="new_category" id="cat_input" class="form-control bg-light border-0 d-none" placeholder="Nhập tên danh mục mới...">
-                                            
-                                            <!-- Nút chuyển đổi -->
-                                            <button type="button" class="btn btn-outline-secondary border-0 bg-light" onclick="toggleQuickAdd('cat')" title="Thêm danh mục mới">
-                                                <i class="bi bi-plus-lg" id="cat_icon"></i>
-                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary border-0 bg-light" onclick="toggleQuickAdd('cat')"><i class="bi bi-plus-lg" id="cat_icon"></i></button>
                                         </div>
                                     </div>
-
-                                    <!-- Thương hiệu -->
                                     <div class="col-12">
                                         <label class="form-label fw-bold text-secondary small">Thương Hiệu</label>
                                         <div class="input-group">
                                             <select name="brand_id" id="brand_select" class="form-select bg-light border-0">
                                                 <option value="">-- Chọn thương hiệu --</option>
-                                                @foreach ($brands as $b) <option value="{{ $b['id'] }}">{{ $b['name'] }}</option> @endforeach
+                                                @foreach ($all_brands as $b) <option value="{{ $b['id'] }}">{{ $b['name'] }}</option> @endforeach
                                             </select>
-                                            
                                             <input type="text" name="new_brand" id="brand_input" class="form-control bg-light border-0 d-none" placeholder="Nhập tên thương hiệu mới...">
-                                            
-                                            <button type="button" class="btn btn-outline-secondary border-0 bg-light" onclick="toggleQuickAdd('brand')" title="Thêm thương hiệu mới">
-                                                <i class="bi bi-plus-lg" id="brand_icon"></i>
-                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary border-0 bg-light" onclick="toggleQuickAdd('brand')"><i class="bi bi-plus-lg" id="brand_icon"></i></button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold text-secondary small">Ảnh Đại Diện</label>
+                                    <label class="form-label fw-bold text-secondary small">Ảnh Đại Diện (Chính)</label>
                                     <div class="d-flex align-items-center gap-3">
                                         <div style="width: 60px; height: 60px;" class="flex-shrink-0 rounded-3 overflow-hidden border">
                                             <img id="add_preview_img" src="https://placehold.co/60?text=IMG" class="w-100 h-100 object-fit-cover">
                                         </div>
                                         <input type="file" name="image" class="form-control bg-light border-0" accept="image/*" onchange="previewImage(this, 'add_preview_img')">
                                     </div>
+                                </div>
+                                
+                                <!-- [NEW] ALBUM ẢNH -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-secondary small">Album Ảnh Phụ (Nhiều ảnh)</label>
+                                    <input type="file" name="gallery[]" class="form-control bg-light border-0" multiple accept="image/*">
+                                    <div class="form-text small">Nhấn giữ Ctrl để chọn nhiều ảnh cùng lúc.</div>
                                 </div>
                             </div>
                         </div>
@@ -95,6 +87,9 @@
                                 </button>
                             </div>
                             <div class="card-body p-0">
+                                <div class="alert alert-info border-0 rounded-0 mb-0 py-2 small">
+                                    <i class="bi bi-info-circle me-1"></i> Lưu sản phẩm xong bạn có thể thêm ảnh chi tiết cho từng biến thể ở phần Chỉnh sửa.
+                                </div>
                                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                                     <table class="table table-borderless mb-0 align-middle">
                                         <thead class="bg-light sticky-top">
@@ -175,24 +170,21 @@
         }
     }
 
-    // Hàm chuyển đổi giữa Select và Input Text
     function toggleQuickAdd(type) {
         const select = document.getElementById(type + '_select');
         const input = document.getElementById(type + '_input');
         const icon = document.getElementById(type + '_icon');
         
         if (input.classList.contains('d-none')) {
-            // Chuyển sang chế độ nhập mới
             select.classList.add('d-none');
-            select.value = ""; // Reset select
+            select.value = "";
             input.classList.remove('d-none');
             input.focus();
             icon.classList.remove('bi-plus-lg');
-            icon.classList.add('bi-arrow-counterclockwise'); // Icon quay lại
+            icon.classList.add('bi-arrow-counterclockwise');
         } else {
-            // Quay lại chế độ chọn
             input.classList.add('d-none');
-            input.value = ""; // Reset input
+            input.value = "";
             select.classList.remove('d-none');
             icon.classList.remove('bi-arrow-counterclockwise');
             icon.classList.add('bi-plus-lg');

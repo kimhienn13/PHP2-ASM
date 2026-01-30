@@ -18,7 +18,7 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link fw-bold border-0 text-secondary" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock-pane" type="button" role="tab">
-                                <i class="bi bi-box-seam me-1"></i> Quản lý Kho & Biến thể
+                                <i class="bi bi-box-seam me-1"></i> Kho & Biến thể & Album
                             </button>
                         </li>
                     </ul>
@@ -30,8 +30,8 @@
                     
                     <!-- TAB 1: EDIT INFO -->
                     <div class="tab-pane fade show active h-100 p-4" id="info-pane" role="tabpanel">
+                        <!-- Form Action sẽ được set bằng JS -->
                         <form id="editProductForm" action="" method="POST" enctype="multipart/form-data">
-                             <!-- Giữ nguyên nội dung form edit cũ -->
                             <div class="row g-4">
                                 <div class="col-lg-8">
                                     <div class="mb-3">
@@ -56,9 +56,16 @@
                                             </select>
                                         </div>
                                     </div>
+
+                                    <!-- [NEW] INPUT THÊM ẢNH GALLERY -->
+                                    <div class="mt-4">
+                                        <label class="form-label fw-bold small text-secondary">THÊM ẢNH VÀO ALBUM</label>
+                                        <input type="file" name="gallery[]" class="form-control bg-white border-0 shadow-sm" multiple accept="image/*">
+                                        <div class="form-text small">Để quản lý/xóa ảnh cũ, vui lòng chuyển sang tab "Kho & Biến thể & Album".</div>
+                                    </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <label class="form-label fw-bold small text-secondary">ẢNH HIỆN TẠI</label>
+                                    <label class="form-label fw-bold small text-secondary">ẢNH ĐẠI DIỆN HIỆN TẠI</label>
                                     <div class="card border-0 shadow-sm text-center">
                                         <div class="bg-white p-2" style="height: 150px; display: flex; align-items: center; justify-content: center;">
                                             <img id="edit_img_preview" src="" class="img-fluid rounded" style="max-height: 100%;">
@@ -80,8 +87,10 @@
 
                     <!-- TAB 2: MANAGE VARIANTS (IFRAME) -->
                     <div class="tab-pane fade h-100" id="stock-pane" role="tabpanel">
-                        <div id="edit-stock-loader" class="d-flex align-items-center justify-content-center h-100">
-                            <div class="spinner-border text-primary" role="status"></div>
+                        <div id="edit-stock-loader" class="d-flex align-items-center justify-content-center h-100" style="min-height: 400px;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
                         <iframe id="edit-stock-iframe" src="" class="w-100 h-100 border-0 d-none" style="min-height: 500px;"></iframe>
                     </div>
@@ -92,20 +101,26 @@
 </div>
 
 <script>
-    // Xử lý Tabs
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('#editTabs button');
         tabs.forEach(tab => {
             tab.addEventListener('click', function() {
-                // Remove active class from all
                 tabs.forEach(t => {
                     t.classList.remove('border-primary', 'text-primary');
                     t.classList.add('text-secondary', 'border-transparent');
                 });
-                // Add to current
                 this.classList.add('border-primary', 'text-primary');
                 this.classList.remove('text-secondary', 'border-transparent');
             });
         });
+
+        const iframe = document.getElementById('edit-stock-iframe');
+        const loader = document.getElementById('edit-stock-loader');
+        iframe.onload = function() {
+            if (iframe.src) {
+                loader.classList.add('d-none');
+                iframe.classList.remove('d-none');
+            }
+        };
     });
 </script>

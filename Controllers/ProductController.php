@@ -8,22 +8,15 @@ class ProductController extends Controller {
     
     /**
      * Hiển thị danh sách sản phẩm (Trang cửa hàng)
-     * Hỗ trợ tìm kiếm và phân trang.
      */
     public function index() {
-        // 1. Khởi tạo Model Product
         $productModel = $this->model('Product');
-
-        // 2. Lấy dữ liệu từ URL (Search & Pagination)
         $search = $_GET['search'] ?? '';
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 8; // Số sản phẩm hiển thị trên mỗi trang
+        $limit = 8; 
 
-        // 3. Gọi hàm list từ Model để lấy dữ liệu
         $result = $productModel->list($page, $limit, $search);
 
-        // 4. Trả về View với dữ liệu tương ứng
-        // Đường dẫn view: app/views/user/product/index.blade.php
         $this->view('user.product.index', [
             'title'       => 'Sản phẩm - TechMart',
             'products'    => $result['data'],
@@ -35,7 +28,8 @@ class ProductController extends Controller {
 
     /**
      * Hiển thị chi tiết một sản phẩm cụ thể
-     * @param int $id ID của sản phẩm cần xem
+     * CẬP NHẬT: Lấy thêm Variants để hiển thị chọn Màu/Size
+     * FIX: Lấy thêm Gallery để hiển thị album ảnh
      */
     public function show($id) {
         if (!$id) {
@@ -46,17 +40,25 @@ class ProductController extends Controller {
         $productModel = $this->model('Product');
         $product = $productModel->show($id);
 
-        // Nếu không tìm thấy sản phẩm, hiển thị trang 404
         if (!$product) {
             $this->notfound("Sản phẩm mà bạn tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.");
             return;
         }
 
-        // Trả về View chi tiết sản phẩm
-        // Đường dẫn view: app/views/user/product/detail.blade.php
+        // 1. LẤY BIẾN THỂ (Màu/Size)
+        $variantModel = $this->model('ProductVariant');
+        $variants = $variantModel->getByProductId($id);
+
+        // 2. [FIX] LẤY ALBUM ẢNH (GALLERY)
+        // Đoạn này bị thiếu trong code cũ khiến ảnh không hiển thị
+        $galleryModel = $this->model('ProductGallery');
+        $gallery = $galleryModel->getByProductId($id);
+
         $this->view('user.product.detail', [
-            'title'   => $product['name'] . ' - TechMart',
-            'product' => $product
+            'title'    => $product['name'] . ' - TechMart',
+            'product'  => $product,
+            'variants' => $variants,
+            'gallery'  => $gallery // Truyền biến gallery sang view
         ]);
     }
 }
